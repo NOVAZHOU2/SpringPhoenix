@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bigdata.dao.Mapper54">
+    <resultMap id="En54" type="com.bigdata.entity.AppTraffic54">
+        <id property="timeGroup" column="time_group"/>
+        <result property="phoneSpeedTestTraffic" column="手机网速检测"/>
+        <result property="pptvTraffic" column="PPTV聚力"/>
+        <result property="tencentVideoTraffic" column="腾讯视频"/>
+        <result property="youkuTraffic" column="优酷视频"/>
+        <result property="videoToolTraffic" column="看片神器"/>
+    </resultMap>
+    <select id="getAppTraffic54" resultMap="En54">
+        SELECT
+            CASE
+                WHEN '时' = '时' THEN SUBSTR(start_time, 9, 2)
+                WHEN '时' = '天' THEN SUBSTR(start_time, 1, 8)
+                WHEN '时' = '月' THEN SUBSTR(start_time, 1, 6)
+                END AS "time_group",
+            SUM(CASE WHEN app_name = '手机网速检测' THEN
+                         CASE WHEN '总流量' = '总流量' THEN (upload_traffic + download_traffic)
+                              WHEN '总流量' = '上行流量' THEN upload_traffic
+                              WHEN '总流量' = '下行流量' THEN download_traffic
+                             END
+                     ELSE 0 END) AS "手机网速检测",
+            SUM(CASE WHEN app_name = 'PPTV聚力' THEN
+                         CASE WHEN '总流量' = '总流量' THEN (upload_traffic + download_traffic)
+                              WHEN '总流量' = '上行流量' THEN upload_traffic
+                              WHEN '总流量' = '下行流量' THEN download_traffic
+                             END
+                     ELSE 0 END) AS "PPTV聚力",
+            SUM(CASE WHEN app_name = '腾讯视频' THEN
+                         CASE WHEN '总流量' = '总流量' THEN (upload_traffic + download_traffic)
+                              WHEN '总流量' = '上行流量' THEN upload_traffic
+                              WHEN '总流量' = '下行流量' THEN download_traffic
+                             END
+                     ELSE 0 END) AS "腾讯视频",
+            SUM(CASE WHEN app_name = '优酷视频' THEN
+                         CASE WHEN '总流量' = '总流量' THEN (upload_traffic + download_traffic)
+                              WHEN '总流量' = '上行流量' THEN upload_traffic
+                              WHEN '总流量' = '下行流量' THEN download_traffic
+                             END
+                     ELSE 0 END) AS "优酷视频",
+            SUM(CASE WHEN app_name = '看片神器' THEN
+                         CASE WHEN '总流量' = '总流量' THEN (upload_traffic + download_traffic)
+                              WHEN '总流量' = '上行流量' THEN upload_traffic
+                              WHEN '总流量' = '下行流量' THEN download_traffic
+                             END
+                     ELSE 0 END) AS "看片神器"
+        FROM app_traffic
+        WHERE start_time BETWEEN '2018071300' AND '2018071324'
+          AND ('ALL' = 'ALL' OR network_type = 'ALL')
+        GROUP BY "time_group"
+        ORDER BY "time_group"
+    </select>
+</mapper>

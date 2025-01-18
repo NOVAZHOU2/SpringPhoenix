@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bigdata.dao.Mapper55">
+    <!-- 定义resultMap -->
+    <resultMap id="En55" type="com.bigdata.entity.AppTraffic55">
+        <id property="appName" column="app_name"/>
+        <result property="type" column="network_type"/>
+        <result property="traffic" column="traffic"/>
+    </resultMap>
+
+    <select id="getAppTraffic55" resultMap="En55">
+        SELECT
+        app_name AS app_name,
+        network_type as network_type,
+        SUM(CAST(upload_traffic AS BIGINT)) AS traffic
+        FROM
+        app_traffic
+        WHERE
+        landmark ='residential'
+        AND network_name IN ('CMCC')
+        AND network_type IN ('3G', '4G', '2G')
+        AND date BETWEEN 20110504 AND 20180901
+        AND app_name IN (
+        SELECT
+        app_name
+        FROM
+        app_traffic
+        WHERE
+        network_name IN ('CMCC')
+        AND network_type IN ('3G', '4G', '2G')
+        AND date BETWEEN 20110504 AND 20180901
+        GROUP BY
+        app_name
+        ORDER BY
+        SUM(CAST(upload_traffic AS BIGINT)) DESC
+        LIMIT 6
+        )
+        GROUP BY
+        app_name, network_type
+        ORDER BY
+        app_name, traffic DESC
+    </select>
+</mapper>

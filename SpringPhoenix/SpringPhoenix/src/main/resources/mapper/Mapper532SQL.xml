@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.bigdata.dao.Mapper53">
+    <resultMap id="En532" type="com.bigdata.entity.AppTraffic53">
+        <id property="name" column="app_name"/>
+        <result property="traffic" column="traffic"/>
+    </resultMap>
+
+    <select id="getAppTraffic532" resultMap="En532">
+        SELECT
+            app_name,
+            SUM(CAST(upload_traffic AS BIGINT)) AS traffic
+        FROM
+            app_traffic
+        WHERE
+            network_name IN ('CMCC')
+          AND network_type IN ('3G', '4G', '2G')
+          AND date BETWEEN 20110504 AND 20180901
+        GROUP BY
+            app_name
+    </select>
+</mapper>
